@@ -407,6 +407,8 @@ CMD [ "npm", "run", "start"]
   - 맨 하단에 Deploy `step`을  추가하였다.
   - porcess.env환경에는 해당정보를 주입한다.
   - secrets객체 안에는 우리가 settings에 설정한 Key-value형태로 저장이 됨.
-  - 그 다음 run방식으로
+  - 그 다음 run방식으로 `aws s3 cp`로 위 스텝에서 빌드한 `build`폴더의 내용을 s3://docker-test에 복사함.
+  - 버킷이름은 자신의 버킷으로 변경하기.
+  - 
 
 
