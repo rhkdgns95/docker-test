@@ -226,3 +226,45 @@ CMD [ "npm", "run", "start"]
       - 접근 key 생성완료 후 travis에서 more options에 settings를 클릭.
       - AWS_ACCESS_KEY/AWS_SECRET_KEY를 작성.
 
+# Github Actions를 이용
+
+### Chpater 1
+- 용어정리
+  - Workflow
+    - 프로젝트를 빌드, 테스트, 패키지, 릴리즈 또는 배포하기 위한 전체적인 프로세스.
+    - 워크플로우는 여러개의 job으로 구성되며 event(on)에 의해 실행됨.
+  - Job
+    - Job은 하나의 인스턴스(리눅스, 맥, 윈도우 등등)에서 여러 Step을 그룹시켜서 실행하는 역할.
+  - Step
+    - Step은 순차적으로 명령어를 수행함.
+    - 크게 Uses와 Run으로 작업단위가 나뉨.
+    - uses: 이미 다른사람들이 정의한 명령어를 가져와 실행하는 것.
+    - run: `npm install`이나 `mkdir example`과 같이 가상환경 내에서 실행할 수 있는 스크립트를 의미.
+  - Event
+    - 워크플로우를 실행시키는 조건을 설정.
+    - 예를들어, 해당 레포지토리에 Code가 push됐을때만, 또는 풀리퀘스트를 했을때, 또는 master branch에 변경사항이 있었을 때 등으로 조건을 줄 수 있다.
+    - 물론 cron처럼 주기적으로 스케줄링하는 방법 또한 지원을 해줌.
+- Workflow 설정하기
+  - github action은 레포지터리에 .github/workflows 폴더안에 yml설정파일이 있으면 활성화 됨.
+  - 생성해주면됨. .github/workflows/main.yml
+  - ```yml
+     name: my workflow
+     on: [push]
+
+     jobs: 
+       build: 
+         name: hello github action
+         runs-on: ubuntu-18.04
+         steps:
+           - name: checkout source code
+             uses: actions/checkout@master
+
+           - name: echo Hello
+             run: echo "Hello"
+  - `step`마다 위와같이 `name`을 설정하고, 실행단위를 정하여 코드를 작성.
+  - `uses`는 외부에 이미 만들어진 코드를 가져와서 실행하는 것.
+  - 실행 후 커밋 푸시를하면, Github Action에 생성이되어있다.
+  - 우리가 workflow파일을 commit해서 push할때, 그 `push`이벤트를 감지하여 workflow가 job을 실행한것이다.
+  
+### Chapter 2
+- 리엑트 프로젝트의 의존파일(node_modules)들을 다운받아 build하는 과정을 알아보자.
