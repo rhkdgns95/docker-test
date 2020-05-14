@@ -11,7 +11,7 @@ const App: React.FC<IProps> = ({ title }: IProps) => {
 
 	return (
 		<>
-			<h1>Hello docker</h1>
+			<h1>Hello docker^^</h1>
 			<Header title={title} />
 
 			{items.map((item, key) => (
