@@ -307,3 +307,8 @@ CMD [ "npm", "run", "start"]
           restore-keys: |
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
+  - 이는 actions/cache 액션을 가져와 실행함.
+  - with구문으로 설정할 수 있는데, `path`와 `key`를 반드시 설정해주어야 함.
+    - path: 저장하고 불러올 캐시 대상 폴더
+    - key: 저장하고 불러올 때, 식별할 수 있는 키 값
+    - restore-keys(optional): 캐시 key가 일치하는 것이 없을때, 차선택으로 캐싱폴더를 찾는 key
