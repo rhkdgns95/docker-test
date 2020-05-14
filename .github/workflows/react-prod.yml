@@ -44,7 +44,7 @@ jobs:
         run: npm run build
       
       - name: Build image             # image 생성 [5]
-        run: docker build -t $IMAGE_NAME -f Dockerfile.prod
+        run: docker build -t $IMAGE_NAME -f Dockerfile.prod .
       
       #  <해야할 일> 이미지 푸시하는 작업하기. Github의 Docker-hub에  [6]
       # - name: Push image

@@ -44,6 +44,6 @@ jobs:
         run: npm run dev
       
       - name: Build image             # image 생성 [5]
-        run: docker build -t $IMAGE_NAME -f Dockerfile.dev
+        run: docker build -t $IMAGE_NAME -f Dockerfile.dev .
       
       # [6]
