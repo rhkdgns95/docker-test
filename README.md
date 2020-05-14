@@ -146,4 +146,34 @@ CMD [ "npm", "run", "start"]
   - 1. git에 새로운 프로젝트 생성 후, git remote repository를 연결.
   - 2. travis공식 사이트에서 dashboard로 이동 후, 생성한 git의 레포지터리를 선택.
     - 이제 새로운 소스가 github에 push될 때마다 travis는 자동으로 해당소스를 가져와 우리가 만든 로직대로 테스트하고 AWS에 해당소스를 push해 줄 것이다.
-  - 3. 
+  - 3. 프로젝트 폴더로 돌아와 root경로에 새로운파일 .travis.yml을 생성.
+    - ```yml
+      sudo: required
+      services:
+        - docker
+      
+      before_install:
+        - docker build -t react-app:0.1 -f Dockerfile.prev .
+      
+      script:
+        - docker run react-app:0.1 --name react-app-0.1 npm run test:unit -- --coverage
+    - ```
+      3-1) sudo: required
+        - 다음 명령어는 아래의 명령어를 실행시킬 때 sudo의 권한을 요구한다.
+      3-2) services
+        - 실행되고 있는 docker의 copy를 가져온다는 의미이다.
+      3-3) before_install
+        - script(테스트 로직)이 실행되기 전 설치되어야 할 파일등를 의미한다.
+        - 참고로 아래 sscript파일에 실행시킬 image_id가 필요한데, 
+          해당 파일에 저장된 명령어들은 우리 대신 모두 travis가 실행시킨다는 것이다.
+        - 따라서 우리는 구체적은 image_id를 알 수 없다. 
+        - 그러므로 생성된 이미지에 태그를 걸어두어(-t 옵션) 생성된 이미지를 실행시키도록 하자.
+      3-4) script
+        - 테스트를 진행하기 위한 명령어를 적는곳이다.
+        - travis는 해당 테스트를 진행한 후의 결과코드를 얻어야 한다.
+        - 하지만 "$ docker run react-app:0.1 --name react-app-0.1 npm run test:unit"까지만 실행하면,
+          해당 명령어는 테스트를 진행하고 끝나지 않고 계속 해당 프로세스에 머물러 있을것이다.
+        - 따라서 뒤에 -- --coverage 옵션을 추가해주어야 함.
+  - 4. 해당 소스를 git repository에 커밋하고 push한다.
+    - ```bash
+      git 
