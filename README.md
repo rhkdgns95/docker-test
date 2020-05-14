@@ -174,6 +174,9 @@ CMD [ "npm", "run", "start"]
         - 하지만 "$ docker run react-app:0.1 --name react-app-0.1 npm run test:unit"까지만 실행하면,
           해당 명령어는 테스트를 진행하고 끝나지 않고 계속 해당 프로세스에 머물러 있을것이다.
         - 따라서 뒤에 -- --coverage 옵션을 추가해주어야 함.
+      3-5) 정정!
+        - travis에서 docker run을 실행시킬때는 항상 <container_id>가 맨뒤에 있어야하며, --name옵션을 줄 수 없다.
+        - docker run 
   - 4. 해당 소스를 git repository에 커밋하고 push한다.
     - ```bash
       git 
