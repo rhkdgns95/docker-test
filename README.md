@@ -290,4 +290,20 @@ CMD [ "npm", "run", "start"]
           
           - name: Build
             run: npm run build
-- 
+  - `Checkout source code`는 이전처럼 레포지터리 파일을 받아오는 것.
+  - 그 후에 node_modules 의존 모듈을 받아오기 위해서 `npm install`을 하고, `npm run build`로 빌드하여 정적 파일 들을 생성함.
+  - actions탭에서 빌드과정을 확인.
+  - 빌드 시간을 단축하기 위해서 Github Action에서는 파일을 Caching하는 방법이 존재함.
+  - 폴더마다 400MB까지 캐싱할 수 있으므로 node_modules폴더를 캐싱하는데에는 충분함.
+- 폴더 캐싱하기
+  - Github Action에서 캐싱을 해보기
+  - ```yml
+    # ... 아래 추가 Cache node modules를 추가.
+    steps:
+      - name: Cache node modules
+        uses: actions/cache@v1
+        with:
+          path: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
