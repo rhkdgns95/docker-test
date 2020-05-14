@@ -268,3 +268,26 @@ CMD [ "npm", "run", "start"]
   
 ### Chapter 2
 - 리엑트 프로젝트의 의존파일(node_modules)들을 다운받아 build하는 과정을 알아보자.
+- npm run build -> build폴더안에 있는 파일들을 모두 `S3에 올리는 자동화 과정`을 살펴보자
+- Workflow 구성
+  - 새로운 main.yml을 작성하기.
+  - ```yml
+    name: React build
+    on: 
+      push: 
+        branches:
+          - master
+    
+    jobs:
+      build:
+        runs-on: ubuntu-18.04
+        steps:
+          - name: Checkout source code.
+            uses: action/checkout@master
+          
+          - name: Install Dependencies
+            run: npm install
+          
+          - name: Build
+            run: npm run build
+- 
