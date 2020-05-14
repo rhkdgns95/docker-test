@@ -2,10 +2,10 @@
 #   [0] 레포지터리 체크아웃
 #   [1] 캐싱 사용 node_modules
 #   [2] npm 의존성 설치
-#   [3] 테스트
+#   [3] Build(dev OR prod)
+#   [4] Test
 
 #   * Production
-#   [4] npm run prod
 #   [5] 도커 이미지 생성
 #   [6] Push 도커 이미지
 
@@ -36,12 +36,12 @@ jobs:
 
       - name: Install dependencies    # 의존성 설치 [2]
         run: npm install 
-
-      - name: Test                    # 테스트 케이스 [3]
-        run: npm run test:unit
-
-      - name: Build prod              # build prod mode [4]
+      
+      - name: Build prod mode         # build prod mode [3]
         run: npm run build
+
+      - name: Test                    # 테스트 케이스 [4]
+        run: npm run test:unit
       
       - name: Build image             # image 생성 [5]
         run: docker build -t $IMAGE_NAME -f Dockerfile.prod .
