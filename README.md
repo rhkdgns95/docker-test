@@ -403,6 +403,10 @@ CMD [ "npm", "run", "start"]
               aws s3 cp \
                 --recursive
                 --region ap-northeast-2 \
-                build s3://docker-test
+                build s3://docker-test 
+  - 맨 하단에 Deploy `step`을  추가하였다.
+  - porcess.env환경에는 해당정보를 주입한다.
+  - secrets객체 안에는 우리가 settings에 설정한 Key-value형태로 저장이 됨.
+  - 그 다음 run방식으로
 
 
