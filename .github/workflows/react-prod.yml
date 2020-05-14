@@ -41,7 +41,7 @@ jobs:
         run: npm run test:unit
 
       - name: Build prod              # build prod mode [4]
-        run: npm run prod
+        run: npm run build
       
       - name: Build image             # image 생성 [5]
         run: docker build -t $IMAGE_NAME -f Dockerfile.prod
