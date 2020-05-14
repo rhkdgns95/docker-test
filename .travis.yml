@@ -5,4 +5,4 @@ before_install:
   - docker build -t react-prod:0.1 -f Dockerfile.dev .
 
 script:
-  - docker run react-prod:0.1 npm run test:unit -- --coverage
+  - docker run --name react-prev-0.1 react-prod:0.1 npm run test:unit -- --coverage

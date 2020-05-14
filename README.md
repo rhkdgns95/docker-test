@@ -153,7 +153,7 @@ CMD [ "npm", "run", "start"]
         - docker
       
       before_install:
-        - docker build -t react-app:0.1 -f Dockerfile.prev .
+        - docker build -t react-app:0.1 -f Dockerfile.dev .
       
       script:
         - docker run react-app:0.1 --name react-app-0.1 npm run test:unit -- --coverage
