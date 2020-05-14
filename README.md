@@ -414,3 +414,19 @@ CMD [ "npm", "run", "start"]
   - 배포 확인.
 
 
+### 장부다 github actions 진행순서
+* 진행순서[공통]
+  - [0] 레포지터리 체크아웃
+  - [1] 캐싱 사용 node_modules
+  - [2] npm 의존성 설치
+  - [3] 테스트
+
+* Production
+  - [4] npm run prod
+  - [5] 도커 이미지 생성
+  - [6] Push 도커 이미지
+
+* Dev
+  - [4] npm run dev
+  - [5] 도커 이미지 생성
+  - [6] Push 도커 이미지
