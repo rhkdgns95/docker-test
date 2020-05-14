@@ -176,7 +176,12 @@ CMD [ "npm", "run", "start"]
         - 따라서 뒤에 -- --coverage 옵션을 추가해주어야 함.
       3-5) 정정!
         - travis에서 docker run을 실행시킬때는 항상 <container_id>가 맨뒤에 있어야하며, --name옵션을 줄 수 없다.
-        - docker run 
+        - docker run react-app:0.1 npm run test:unit -- --coverage와 같이 수정해야 함!
   - 4. 해당 소스를 git repository에 커밋하고 push한다.
     - ```bash
-      git 
+      git add .
+      git commit -m ""
+      git push origin XXX
+  - 5. 이제 travis사이트에서 확인이 가능함.
+
+## Chapter 4
