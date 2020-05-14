@@ -5,7 +5,7 @@
     "baseUrl": ".", // paths 옵션의 기준 디렉터리
     "rootDir": "src", // 컴파일할 대상들이 들어있는 폴더(루트 폴더) -> 즉, 이 폴더안에서 작업을 해야함 - outDir옵션을 사용할때만 사용
     "outDir": "./dist/",  // 빌드 결과물 폴더(parcel에서 따로 option을 통해서 생성)
-    "module": "commonjs", // 빌드 결과의 모듈방식은 commonjs로 한다는 것.
+    "module": "CommonJS", // 빌드 결과의 모듈방식은 commonjs로 한다는 것.
     "target": "ES5",  // 빌드 결과물은 es5 방식으로 한다는 것.
     "jsx": "react", // React의 jsx구문을 사용 가능
     "lib": [

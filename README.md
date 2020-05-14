@@ -1,90 +1,149 @@
-# React 환경구성
+# Docker React환경 배포
 
-## Install
-- yarn init .
-- yarn add -D parcel-bundler typescript
-- yarn add react react-dom 
-- yarn add -D @types/react @types/react-dom
-- yarn add -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
-- yarn add -D eslint-plugin-{import,jsx-a11y,eslint,react,react-hooks}
-- yarn add -D eslint-config-airbnb
-- yarn add -D prettier eslint-config-prettier eslint-plugin-prettier
-- yarn add -D mocha@6.2.2 chai jsdom
-- yarn add -D @types/mocha @types/chai
-- yarn add -D enzyme enzyme-adapter-react-16
-- yarn add -D @babel/core @babel/register @babel/preset-env @babel/preset-typescript babel-loader ts-node ignore-styles
-- yarn add -D nyc
-- yarn add -D husky lint-staged
 
-## Todo
-- [x] npm init.
-- [x] bundler install Parcel, React app(typescript).
-- [x] lint, prettier(airbnb)
-- [x] mocha, chai
-- [x] husky hook(commit -> lint, prettier / push -> testing mocha, chai)
-- [x] parcel build
-- [ ] ssr - loadable components
-- [ ] styled-components
+## 설명
+## Chapter 1
+```Dockerfile
+FROM node:alpine
 
-## Commit
-- commit[0]: React-app Typescript to Parcel.
-- commit[1]: lint, prettier
-- commit[2]: mocha, chai
-- commit[3]: husky hook(commit, push)
-- commit[4]: parcel build
+WORKDIR /app
 
-## Study
-- 설치할 eslint패키지 파일확인 
-> - npm info "eslint-config-airbnb@latest" peerDependencies
-- husky
-> - git hooks를 쉽게 만들어 잘못된 commit 또는 push를 방지.
-- lint-staged
-> - staged(수정한 파일을 곧 commit할 것이라고 표시한 상태)된 파일만 lint하기.
-- git commit상태 해제(commit취소하고 unstaged 상태로 돌리고 워킹디렉터리에 보존)
-> - git reset HEAD^
+COPY package.json .
+RUN npm install
+COPY . .
 
-## Command
-```
-# parcel
-yarn parcel -p 3000 ./public/index.html --open
-// public/index.html의 파일을 개발환경으로 3000포트에 작동시키며 최초로 열기.
-
-yarn parcel build ./public/index.html
-// public/index.html의 파일을 프로덕션 환경으로 실행.
-
-# prettier
-yarn prettier --write --config ./.prettierrc './src/**/!(*.spec).{ts,tsx}'
-// prettier를 실행시키며, 기존 코드가 정리됨(.printerrc 파일 기준)
-
-# lint
-yarn eslint './src/**/!(*.spec).{ts,tsx}'
-// 코드의 문법에 에러가 있는지 확인하기 위해 eslint가 실행(수동적)
-
-yarn exlint --fix './src/**/!(*.spec).{ts,tsx}'
-// 코드의 문법확인과 고쳐줌(능동적)
-
-# mocha
-yarn mocha -r @bable/register -r ts-node/register -r ./test/helpers.js -r ./test/dom.js -r ignore-styles ./src/**/*.spec.*
-// (mocha)테스팅 설정을 구성하는 ./test/의 디렉터리 안의 파일들로 ./src/에있는 *.spec.*파일에 대한 테스트 실행.
-
-yarn mocha -r @babel/register -r ts-node/register -r ./test/dom.js -r ./test/helpers.js -r ignore-styles ./src/**/*.spec.* -- --watch
-// (mocha)테스팅 실행을 watch하며, 계속해서 확인.
-
-yarn nyc mocha -r @babel/register -r ts-node -r ./test/dom.js -r ./test/helpers.js -r ignore-styles ./src/**/*.spec.*
-// (mocha)테스팅을 상세한 nyc로 결과 확인하기.
-
-# lint-staged
-package.json에서 { "lint-staged": { "src/**/!(*.spec).{ts,tsx}": [ "yarn lint:fix" ] }}
-혹은 시간이 걸리겠지만, 전체 코드들을 yarn prettier를 실행시키고 lint를 실행시키도 무방함.
-또한 staged에 있는 파일들에 대해서 추가적으로 작업을 시켜도 됨.
-
-# husky
-package.json에서 { "husky": {"hooks": { "pre-push": "", "pre-commit": [ "", "" ]}}} 작성.
-"pre-push": git에 push되기 직전 작업을 실행.
-"pre-commit": git에 commit되기 직전 작업을 실행.
-
+CMD [ "npm", "run", "start"]
 ```
 
-## Refs.
-- [eslint, prettier](https://flamingotiger.github.io/javascript/eslint-setup/#2-1-eslint-config-airbnb-%EB%A1%9C-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0)
-- [mocha, chai](https://rinae.dev/posts/react-testing-tutorial-kr)
+- volumn
+  - 우리가 소스를 변경하게되면 어떻게 될까?
+  - 컨테이너는 우리 소스파일의 스냅샷을 가져간다.
+  - 따라서 소스가 바뀔때마다 항상 새로 build를 한다면 정말 귀찮을것이다.
+  - 그래서 소스코드를 컨테이너 안에 mount시킬것이다. 
+  - 즉, 컨테이너 안의 코드가 우리의 로컬 소스코드를 reference 하도록 해주는 것이다.
+
+- volumn 실행 방법
+  - 1. Docker CLI 사용하기
+    - ```json
+      docker run -p 3000:3000
+       -v /app/node_modules    // node_modules 폴더에 bookmark를 둔다. 즉, 해당 폴더는 맵핑을 시키지 않을것.
+       -v $(pwd):/app     // 현재 경로(pwd)에 있는 파일들을 container의 app에 모두 맵핑시킨다.
+       <image_id>
+    - 위의 설명은 -v $(pwd):/app는 : 이 들어가있고 -v /app/node_modules는 들어가 있지 않은것을 확인.
+    - :이 들어가있으면 해당 경로의 파일들을 Mapping 즉 mount한다는 것이고 :이 없으면 해당 폴더를 제외하는 것이다.
+    - 이를 종합해보면 아래와 같다.
+    - ```bash
+      docker run -p 3000:3000 -v /app/node_modules -v $(pwd):/app <image id>
+    - 이와같이 node_modules를 제외하는 이유는 프로젝트 내의 node_modules폴더를 삭제했기 때문이다.
+    - node_modules폴더를 삭제하여 해당 폴더는 비어있는데, /app폴더가 mapping을 하면 npm install을 하고나서도
+      node_modules은 남아있지 않기 때문이다. 따라서 node_modules폴더는 맵핑을 제외 시켜야 함.
+  - 2. docker-compose 사용하기.
+    - docker compose.yml
+    - ```yml
+      version: "3"
+      service: 
+        web:
+          build:
+            context: .
+            dockerfile: Dockerfile.dev
+          ports: 
+            - "3000:3000"
+          volumes:
+            - /app/node_modules
+            - .:/app
+    - 이후 아래 명령어를 실행시키면, 소스코드가 바뀔때마다 자동적으로 컨테이너 안의 소스코드도 바뀌는것을 확인.
+    - ```bash
+      docker-compose up --build
+
+## Chapter 2
+- npm run test를 동작시켜 해당 프로젝트를 test해보자.
+- ```bash
+  docker build -f Dockerfile.dev .
+  docker run -it [image_id] 
+- 해당 명령어를 실행시키면 test소스코드가 바뀔때마다 소스코드는 실행이 안되는것을 볼 수 있다.
+- 이 역시 해당 명령어로 build된 container는 이전의 파일 스냅샷만 갖고있기 때문이다.
+- 이를 해결하기 위한 다음 2가지 방법이 있음.
+  - 1) attach 이용하기.
+    - 터미널 1
+    - ```bash
+      docker-compose up
+    - 터미널 2
+    - ```bash
+      docker exec -it [contianer_id] npm run test
+  - 2) docker-compose.yml에 해당 소스 추가하기.
+    - ```yml
+      version: "3"
+      service:
+        web: 
+          build: 
+            context: .
+            dockerfile: Dockerfile.dev
+          ports:
+            - "3000:3000"
+          volumes:
+            - /app/node_modules
+            - .:/app
+        tests: 
+          build:
+            context: .
+            dockerfile: Dockerfile.dev
+          volumes: 
+            - /app/node_modules
+            - .:/app
+          command: ["npm", "run", "test"]
+    - docker-compose.yml 파일의 service에 test를 추가.
+    - 이후 다음 명령어를 실행
+    - ```bash
+      docker-compose up --build
+    - 이제 소스코드가 바뀔때마다 자동적으로 컨테이너 안의 소스코드도 바뀌는것을 확인할 수 있다.
+    - 하지만, 이렇게하면 terminal에 아무것도 입력할 수 없다.
+- 이제 production을 위한 docker컨테이너를 생성해보자.
+  - 개발서버와 운영서버는 다른 서버가 필요하다
+  - 운영서버에서는 nginx를 사용하여 운영한다.
+  - 따라서 다음과 같이 dockerfile을 작성해야한다.
+  - ```
+    1. baseimage로 node:alpine을 사용.
+    2. package.json 파일을 복사.
+    3. dependencies들을 설치.
+    4. npm run build를 이용해 프로젝트를 deploy하기 위해 build해줌.
+    5. nginx를 시작.
+  - 여기서 주목해야할 것은 3번과 5번이다.
+  - 3번 단계에서는 설치된 `dependencies들은 npm run build를 하기 위해 필요한 파일들`이다.
+  - 운영환경에서 우리가 필요한 건 오로지 build한 내용이 담겨있는 build폴더내의 파일들이다.
+  - 따라서 운영 컨테이너는 다른 개발 파일들이 필요없고, 해당 build폴더내의 파일들만 가지고 있으면 됨.
+  - 그리고 5단계는 어떻게 실행할까?
+  - 다음과 같은 단계를 거침.
+  - ```
+    # Build Phase
+      1. node:alpine을 base image로 사용
+      2. package.json파일 복사
+      3. dependencies들 설치
+      4. npm run build 실행
+
+    # Run Phase
+      1. nginx를 base image로 사용
+      2. build phase의 4단계에서 생성된 build폴더의 내용을 복사
+      3. nginx 실행
+  - 해당 단계를 실행시키기 위한 Dockerfile은 다음과 같다.
+  - ```Dockerfile
+    FROM node:alpine as builder
+    WORKDIR '/app'
+    COPY package.json .
+    RUN npm install
+    COPY . .
+    RUN npm run build
+
+    FROM nginx
+    COPY --from=builder /app/build /usr/share/nginx/html
+  - 이제 다음 명령어로 해당파일의 이미지를 만들고 컨테이너를 실행시킬 수 있다.
+  - ```bash
+    docker build -t react-app-prod -f Dockerfile.dev
+    docker run -p 8080:80 --name my-react-app-prod react-app-prod
+  - 이제 운영서버로 배포완료.
+
+## Chapter3
+- Travis CI를 통해 git에 푸시한 코드를 자동으로 테스트하고 aws에 push하기
+  - 1. git에 새로운 프로젝트 생성 후, git remote repository를 연결.
+  - 2. travis공식 사이트에서 dashboard로 이동 후, 생성한 git의 레포지터리를 선택.
+    - 이제 새로운 소스가 github에 push될 때마다 travis는 자동으로 해당소스를 가져와 우리가 만든 로직대로 테스트하고 AWS에 해당소스를 push해 줄 것이다.
+  - 3. 

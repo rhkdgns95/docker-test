@@ -44,8 +44,8 @@
   },
   "scripts": {
     "test": "mocha",
-    "dev": "parcel -p 3000 ./public/index.html --open",
-    "build": "parcel build ./public/index.html -d my_dist --public-url ./",
+    "dev": "parcel -p 3000 ./public/index.html",
+    "build": "parcel build ./public/index.html -d build --public-url ./",
     "prettier": "prettier --write --config ./.prettierrc \"./src/**/!(*.spec).{ts,tsx}\"",
     "lint": "eslint \"src/**/!(*.spec).{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/!(*.spec).{ts,tsx}\"",

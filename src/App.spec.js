@@ -62,16 +62,16 @@ describe("App Component", () => {
       wrapper = shallow(<App />);
     });
     
-    it("렌더링시 포함되는 엘리먼트의 총 갯수 6개", () => {
-      expect(wrapper.find('*')).to.have.length(6);
+    it("렌더링시 포함되는 엘리먼트의 총 갯수 7개", () => {
+      expect(wrapper.find('*')).to.have.length(7);
     });
 
     it("렌더링시 포함되는 엘리먼트 div는 0개", () => {
       expect(wrapper.find('div')).to.have.length(0);
     });
     
-    it("렌더링시 포함되는 엘리먼트 h1 0개", () => {
-      expect(wrapper.find('h1')).to.have.length(0);
+    it("렌더링시 포함되는 엘리먼트 h1 1개", () => {
+      expect(wrapper.find('h1')).to.have.length(1);
     });
 
     it("렌더링시 포함되는 엘리먼트 p는 4개", () => {

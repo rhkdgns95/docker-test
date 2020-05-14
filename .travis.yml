@@ -1,0 +1,9 @@
+sudo: required
+services: 
+  - docker
+
+before_install:
+  - docker build -t react-prod:0.1 -f Dockerfile.prev .
+
+script:
+  - docker run react-prod:0.1 --name react-prod-0.1 npm run test:unit -- --coverage
