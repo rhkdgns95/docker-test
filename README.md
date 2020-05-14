@@ -330,3 +330,79 @@ CMD [ "npm", "run", "start"]
       - 쉽게 말하면 `node_modules`를 저장했다 불러온 것임.
   - 이제 한번더 실행시키면, 이전에 캐싱의 결과로 `Cache not found for ...`이 뜨지만, 
   
+### Chapter 3
+- 정적 웹사이트 S3생성
+  - `모든 퍼블릭 엑세스 차단`을 해제.
+  - 정적 `웹 사이트 호스팅` 카드를 누른 뒤 호스팅 설정하기.
+    - 인덱스문서와 오류문서에 index.html을 적어주고 저장버튼 클릭.
+  - 다음의 버킷 엑세스정책 설정.
+    - ```json
+      {
+        "Version": "2012-10-17",
+        "Id": "Policy1546336529826",
+        "Statement": [
+          {
+              "Sid": "Stmt1546336528005",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": "s3:GetObject",
+              "Resource": "arn:aws:s3:::github-action-testing/*" // 자신의 버킷 이름으로 변경.
+          }
+        ]
+      }
+  - 이제 호스팅을 위한 버킷설정은 끝남.
+
+- AWS CLI 권한 생성
+  - 터미널 CLI로 버킷에 접근하기 위한 권한을 부여하는 방법을 알아보기.
+  - AWS Console에서 IAM 서비스 탭에서 기존정책직접연결에서 S3검색 후 AmazonS3FullAccess를 선택.
+
+### Chapter 4
+- Github Action에 민감한 정보 저장하기.
+  - AWS CLI Key는 외부에 노출되어서는 안됨.
+  - 하지만 우리의 레포지터리는 공개 레포지토리이기 때문에, 업로드하는 파일은 누구에게나 알려지게 됨.
+  - 따라서 민감한 정보는 따로 암호화하여 저장할 수 있도록 Github Action에서 방법을 제공한다.
+  - 바로 Secrets를 통해서(Git Repository에서의 Settings에서 Secrets클릭) 관리됨.
+    - AWS_ACCESS_KEY_ID에 값을 넣었다면, process.env.AWS_ACCESS_KEY_ID와 같이 사용됨.
+  - AWS_ACCESS_KEY, AWS_SECRET_KEY를 생성해주자.
+- Github Action에서 S3업로드하기.
+  - Secrets 정보를 불러와 코드를 작성해보자.
+  - ```yml
+    name: React build
+    on: 
+      push: 
+        branches:
+          - master
+    
+    jobs:
+      build:
+        runs-on: ubuntu-18.04
+        steps:
+          - name: Checkout source code.   # 레포지터리 체크아웃
+            uses: actions/checkout@master
+          
+          - name: Cache node modules      # node_modules 캐싱
+            uses: actions/cache@v1
+            with: 
+              path: node_modules
+              key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+              restore-keys: |
+                ${{ runner.OS }}-build-
+                ${{ runner.OS }}-
+          
+          - name: Install depencencies    # 의존성 파일 설치
+            run: npm install
+          
+          - name: Build                   # React Build
+            run: npm run build
+
+          - name: Deploy                  # S3에 배포하기.
+            env:
+              AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+              AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            run: |
+              aws s3 cp \
+                --recursive
+                --region ap-northeast-2 \
+                build s3://docker-test
+
+
