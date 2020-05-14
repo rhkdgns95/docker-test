@@ -175,8 +175,10 @@ CMD [ "npm", "run", "start"]
           해당 명령어는 테스트를 진행하고 끝나지 않고 계속 해당 프로세스에 머물러 있을것이다.
         - 따라서 뒤에 -- --coverage 옵션을 추가해주어야 함.
       3-5) 정정!
-        - travis에서 docker run을 실행시킬때는 항상 <container_id>가 맨뒤에 있어야하며, --name옵션을 줄 수 없다.
+        - docker파일은 npm run test:unit의 명령어가 들어가있는 Dockerfile.dev으로 올려야 함.
+        - travis에서 docker run을 실행시킬때는 항상 <container_id>가 맨뒤에 있어야하며, --name과 같은 여러 옵션들은 항상 <container_id>앞에 작성해주도록 해야함.
         - docker run react-app:0.1 npm run test:unit -- --coverage와 같이 수정해야 함!
+      3-6) 정정 
   - 4. 해당 소스를 git repository에 커밋하고 push한다.
     - ```bash
       git add .
@@ -185,3 +187,42 @@ CMD [ "npm", "run", "start"]
   - 5. 이제 travis사이트에서 확인이 가능함.
 
 ## Chapter 4
+- AWS계정에 들어가 Elastic Beanstalk를 생성
+  - 기본 구성 플렛폼: Docker
+  - 앱 코드: 샘플 애플리케이션
+- .travis.yml파일 작성
+  - ```yml
+    services: 
+      - docker
+    
+    before_install:
+      - docker build -t react-app:0.1 -f Dockerfile.dev .
+    
+    script:
+      - docker run --name react-app-0.1 react-app:0.1 npm run test:unit -- --coverage
+    
+    deploy:
+      provider: elasticbeanstalk
+      region: "ap-northeast-2"
+      app: "docker-testing"
+      env: "DockerTesting-env"
+      bucket_name: ""
+      bucket-path: "docker-testing"
+      on:
+        branch: master
+      access_key_id: $AWS_ACCESS_KEY
+      secret_access_key:
+        secure: $AWS_SECRET_KEY
+    - buckey명은 S3를 검색하면 나옴.
+    - access_key생성방법
+      - IAM에서 USERS클릭
+      - ADD User
+      - Username 입력 -> Access type은 Programmatic access를 선택 후 next클릭
+      - Set Permission메뉴 중 Attach existing policies directly 메뉴 클릭
+      - 검색창 beanstalk검색
+      - Description에 Provices full access to AWS Elastic Beanstalk의 권한 선택 후 next
+      - Create User클릭
+      - 이제 해당정보는 한번만 볼 수 있고 다음부터는 확인 및 접근 불가.
+      - 접근 key 생성완료 후 travis에서 more options에 settings를 클릭.
+      - AWS_ACCESS_KEY/AWS_SECRET_KEY를 작성.
+
