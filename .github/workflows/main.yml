@@ -19,7 +19,10 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
-      
+
+      - name: Testing                 # 테스트
+        run: npm run test:unit
+        
       - name: Install depencencies    # 의존성 파일 설치
         run: npm install
       
