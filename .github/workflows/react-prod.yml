@@ -4,8 +4,6 @@
 #   [2] npm 의존성 설치
 #   [3] Build(dev OR prod)
 #   [4] Test
-
-#   * Production
 #   [5] 도커 이미지 생성
 #   [6] Push 도커 이미지
 
@@ -45,62 +43,18 @@ jobs:
       
       - name: Build image             # image 생성 [5]
         run: docker build -t $IMAGE_NAME -f Dockerfile.prod .
-      
-      #  <해야할 일> 이미지 푸시하는 작업하기. Github의 Docker-hub에  [6]
-      # - name: Push image
-      #   run: 
 
+      #   <해야할 일> 이미지 푸시하는 작업하기. Github의 Docker-hub에  [6]
+#      - name: Push image
+#        run: 
 
+#      - name: Deploy                  # S3에 배포하기.
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        run: |
+#          aws s3 cp \
+#            --recursive \
+#            --region ap-northeast-2 \
+#            build s3://github-action-testing
 
-
-
-
-
-
-
-
-
-
-
-
-# ** 참고사항 **
-# name: React build
-# on: 
-#   push: 
-#     branches:
-#       - master
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-18.04
-#     steps:
-#       - name: Checkout source code.   # 레포지터리 체크아웃
-#         uses: actions/checkout@master
-      
-#       - name: Cache node modules      # node_modules 캐싱
-#         uses: actions/cache@v1
-#         with: 
-#           path: node_modules
-#           key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
-#           restore-keys: |
-#             ${{ runner.OS }}-build-
-#             ${{ runner.OS }}-
-
-#       - name: Testing                 # 테스트
-#         run: npm run test:unit
-
-#       - name: Install depencencies    # 의존성 파일 설치
-#         run: npm install
-      
-#       - name: Build                   # React Build
-#         run: npm run build
-
-#       - name: Deploy                  # S3에 배포하기.
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#         run: |
-#           aws s3 cp \
-#             --recursive \
-#             --region ap-northeast-2 \
-#             build s3://github-action-testing
