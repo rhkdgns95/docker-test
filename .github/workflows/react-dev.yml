@@ -1,49 +1,48 @@
 #   * 진행순서[공통]
-#   [0] 레포지터리 체크아웃
-#   [1] 캐싱 사용 node_modules
-#   [2] npm 의존성 설치
-#   [3] Build(dev OR prod)
-#   [4] Test
+#   [0] 레포지터리 체크아웃 - (O)
+#   [1] 캐싱 사용 node_modules - (O)
+#   [2] npm 의존성 설치 - (O)
+#   [3] Build(dev OR prod) - (O)
+#   [4] Test - (O)
+#   [5] 도커 이미지 생성 - (X) 
+#   [6] Push 도커 이미지 - (X)
 
-#   * Dev
-#   [5] 도커 이미지 생성
-#   [6] Push 도커 이미지
 
-name: React dev
-on:
-  push:
+name: React development mode
+on: 
+  push: 
     branches:
       - master
 
-env: 
+env:
   IMAGE_NAME: jangbuda-front-app:dev
 
-jobs:
+jobs: 
   build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source code    # 레포지터리 체크아웃 [0]
+    steps: 
+      - name: Checkout source code  # [0] Repo 체크아웃
         uses: actions/checkout@v1
       
-      - name: Caching node_modules    # node_modules 캐싱 [1]
+      - name: Caching node_modules  # [1] node_modules 캐싱
         uses: actions/cache@v1
         with:
           path: node_modules
           key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
           restore-key: |
             ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
-        
-      - name: Install dependencies    # 의존성 설치 [2]
+            ${{ runner.OS }}
+      
+      - name: Install dependencies   # [2] 의존성 설치
         run: npm install
       
-      - name: Build dev mode          # build dev mode [3] 
-        run: npm run dev
+      - name: Build                  # [3] 앱 빌드
+        run: npm run build
 
-      - name: Test                    # 테스트 [4]
-        run: npm run test:unit
-      
-      - name: Build image             # image 생성 [5]
+      - name: Test                   # [4] 테스트 작업
+        run: npm run test
+
+      - name: Build image            # [5] 도커 이미지 생성
         run: docker build -t $IMAGE_NAME -f Dockerfile.dev .
       
-      # [6]
+      # [6] 도커 이미지 푸시
