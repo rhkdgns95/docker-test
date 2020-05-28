@@ -13,6 +13,8 @@ on:
   push: 
     branches:
       - master
+      - khk_asdf*
+
 
 env:
   IMAGE_NAME: jangbuda-front-app:dev
