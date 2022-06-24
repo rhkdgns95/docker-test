@@ -29,7 +29,7 @@
     "eslint-plugin-react-hooks": "^3.0.0",
     "husky": "^4.2.5",
     "ignore-styles": "^5.0.1",
-    "jsdom": "^16.2.2",
+    "jsdom": "^16.5.0",
     "lint-staged": "^10.1.6",
     "mocha": "6.2.2",
     "nyc": "^15.0.1",
